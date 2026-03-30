@@ -1,12 +1,8 @@
-import { Router } from "express";
+import type { Request, Response } from "express";
 import { PizzaModel } from "../models/pizza.model.js";
 import { getErrorMessage } from "../middleware/error.js";
 
-// Pizzas Routes
-
-export const routes = Router();
-
-routes.get("/pizzas", async (req, res) => {
+export const getPizzas = async (req: Request, res: Response) => {
   try {
     const pizzas = await PizzaModel.find({});
 
@@ -14,9 +10,9 @@ routes.get("/pizzas", async (req, res) => {
   } catch (error) {
     res.status(500).send(getErrorMessage(error));
   }
-});
+};
 
-routes.post("/pizzas", async (req, res) => {
+export const createPizza = async (req: Request, res: Response) => {
   try {
     const pizza = await PizzaModel.create(req.body);
 
@@ -24,9 +20,9 @@ routes.post("/pizzas", async (req, res) => {
   } catch (error) {
     res.status(500).send(getErrorMessage(error));
   }
-});
+};
 
-routes.patch("/pizzas/:id", async (req, res) => {
+export const updatePizza = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
     const pizza = await PizzaModel.findByIdAndUpdate(id, req.body, {
@@ -37,9 +33,9 @@ routes.patch("/pizzas/:id", async (req, res) => {
   } catch (error) {
     res.status(404).send(getErrorMessage(error));
   }
-});
+};
 
-routes.delete("/pizzas/:id", async (req, res) => {
+export const deletePizza = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
     const pizza = await PizzaModel.findByIdAndDelete(id);
@@ -48,4 +44,4 @@ routes.delete("/pizzas/:id", async (req, res) => {
   } catch (error) {
     res.status(404).send(getErrorMessage(error));
   }
-});
+};
