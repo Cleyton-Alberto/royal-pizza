@@ -3,10 +3,11 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const dbName = process.env.DB_NAME;
 const username = process.env.DB_USERNAME;
 const password = process.env.DB_PASSWORD;
 
-const URL_DB: string = `mongodb+srv://${username}:${password}@project-royal-pizza.wqplypc.mongodb.net/?appName=project-royal-pizza`;
+const URL_DB: string = `mongodb+srv://${username}:${password}@project-royal-pizza.wqplypc.mongodb.net/${dbName}?appName=project-royal-pizza`;
 
 export const connectToDatabase = async () => {
   try {
