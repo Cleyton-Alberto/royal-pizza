@@ -1,47 +1,35 @@
 import type { Request, Response } from "express";
 import { PizzaModel } from "../models/pizza.model.js";
-import { getErrorMessage } from "../middleware/error.js";
+import { asyncHandler } from "../utils/async-handler.js";
+import { NotFoundError } from "../utils/api-errors.js";
 
-export const getPizzas = async (req: Request, res: Response) => {
-  try {
-    const pizzas = await PizzaModel.find({});
+export const getPizzas = asyncHandler(async (req: Request, res: Response) => {
+  const pizzas = await PizzaModel.find({});
 
-    res.status(200).json(pizzas);
-  } catch (error) {
-    res.status(500).send(getErrorMessage(error));
-  }
-};
+  res.status(200).json(pizzas);
+});
 
-export const createPizza = async (req: Request, res: Response) => {
-  try {
-    const pizza = await PizzaModel.create(req.body);
+export const createPizza = asyncHandler(async (req: Request, res: Response) => {
+  const pizza = await PizzaModel.create(req.body);
+  res.status(201).json(pizza);
+});
 
-    res.status(201).json(pizza);
-  } catch (error) {
-    res.status(500).send(getErrorMessage(error));
-  }
-};
+export const updatePizza = asyncHandler(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const pizza = await PizzaModel.findByIdAndUpdate(id, req.body, {
+    returnDocument: "after",
+  });
 
-export const updatePizza = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id;
-    const pizza = await PizzaModel.findByIdAndUpdate(id, req.body, {
-      returnDocument: "after",
-    });
+  if (!pizza) throw new NotFoundError("Pizza não encontrada");
 
-    res.status(200).json(pizza);
-  } catch (error) {
-    res.status(404).send(getErrorMessage(error));
-  }
-};
+  res.status(200).json(pizza);
+});
 
-export const deletePizza = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id;
-    const pizza = await PizzaModel.findByIdAndDelete(id);
+export const deletePizza = asyncHandler(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const pizza = await PizzaModel.findByIdAndDelete(id);
 
-    res.status(204).json(pizza);
-  } catch (error) {
-    res.status(404).send(getErrorMessage(error));
-  }
-};
+  if (!pizza) throw new NotFoundError("Pizza não encontrada");
+
+  res.status(204).send();
+});
